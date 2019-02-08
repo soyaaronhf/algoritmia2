@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Problema algoritmia 2</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/soyaaronhf/algoritmia1/master/coding.png" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row align-items-center" style="height:100vh">
+            <div class="col py-5">
+                <button id="btnGenArr" class="btn btn-primary d-block mx-auto">Generar arreglo</button>
+                <div id="app" class="mt-4"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelector("#btnGenArr").addEventListener("click", ()=>{
+            var n = Math.floor((Math.random() * 10) + 3);
+            var arr=[], xmax = 0, ymax = 0, x, y;
+            for(var i=0;i < n ;i++){
+                x = Math.floor((Math.random() * 3) + 1);
+                y = Math.floor((Math.random() * 3) + 1);
+                arr.push( y + '.' + x );
+                if(x > xmax){xmax = x }
+                if(y > ymax){ymax = y }
+            }
+            console.log('x:',xmax,'y:',ymax);
+            var template = '<p class="text-center h2" style="word-break:break-word">'+
+                                '['+arr.toString()+']'+
+                            '</p>'+
+                            '<button id="btnResult" class="btn btn-primary d-block mt-4 mx-auto">'+
+                                'Resolver'+
+                            '</button>'+
+                            '<div id="solve" class="mt-4 text-center"></div>';
+            document.querySelector('#app').innerHTML = template;
+            var main_arr = [];
+            arr.forEach((el,k)=>{
+                var el = el.split(".");
+                var temp_arr = [];
+                for(var i=0;i<ymax;i++){
+                    var temp_arr2 = [];
+                    for(var j=0;j<xmax;j++){
+                        if(parseInt(el[1])>j){
+                            temp_arr2.push(1);
+                        }else{
+                            temp_arr2.push(0);
+                        }
+                    }
+                    if(parseInt(el[0])>i){
+                        temp_arr.push(temp_arr2);
+                    }else{
+                        var temp_arr3 = [];
+                        for(var k = 0; k < xmax; k++){
+                            temp_arr3.push(0);
+                        }
+                        temp_arr.push(temp_arr3);
+                    }
+                }
+                main_arr.push(temp_arr);
+            });
+            console.log(main_arr);
+            document.querySelector("#btnResult").addEventListener("click",() => {
+                document.querySelector("#btnResult").classList.add('disabled');
+                var solve = [];
+                var res;
+                for( var j = 0; j < ymax; j++ ){
+                    for(var i=0;i<main_arr.length;i++){
+                        if(i==0){
+                            res = sumArray(main_arr[i][j],main_arr[i+1][j]);
+                        }else if(main_arr[i+1]){
+                            res = sumArray(res,main_arr[i+1][j]);
+                        }else{
+                            break;
+                        }
+                    }
+                    solve.push(res);
+                }
+                var max_num = 0,count=0;
+                for(var i=0; i<solve.length;i++){
+                    for(var j=0; j < solve[i].length;j++){
+                        if(max_num<solve[i][j]){
+                            max_num=solve[i][j];
+                            count=1;
+                        }else if(max_num==solve[i][j]){
+                            count++;
+                        }
+                    }
+                }
+                solve.forEach(arr=>{
+                    var template = '<p class="h2 text-success">['+arr.toString()+']</p>';
+                    document.querySelector('#solve').insertAdjacentHTML('beforeend', template);
+                });
+                var template = '<p class="h3">El número <b class="text-success">'+
+                                max_num +'</b> es el mayor y aparece <b class="text-success">'+
+                                count + '</b> '+
+                                (count>1?"veces":"vez")+'</p><a class="mt-4" href="https://github.com/soyaaronhf/algoritmia2">Ver código</a>';
+                document.querySelector('#solve').insertAdjacentHTML('beforeend', template);
+                console.log(max_num,count);
+            });
+        });
+        function sumArray(a,b){
+            var res = a.map(function (el, i) {
+                return parseInt(el) + parseInt(b[i]);
+            });
+            return res;
+        }
+    </script>
+</body>
+</html>
